@@ -1,47 +1,41 @@
 # -*- coding: utf-8 -*-
 # @Author: Ramiro Luiz Nunes
-# @Date:   2024-03-19 07:43:49
+# @Date:   2024-03-19 13:57:09
 # @Last Modified by:   Ramiro Luiz Nunes
-# @Last Modified time: 2024-03-19 07:45:30
+# @Last Modified time: 2024-03-19 14:07:06
 
 
-from sklearn.datasets import load_digits
-from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
 
-import matplotlib.pyplot as plt
+import pandas as pd
 
 
-# Load the digits dataset
-digits = load_digits()
+# Load the data from the .xlsx file
+df: pd.DataFrame = pd.read_excel('dataset/people.xlsx')
 
-# Split the data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(
-    digits.data,
-    digits.target,
-    test_size=0.2,
-    random_state=42,
-)
+# Prepare the data
+X: object = df[['age', 'employment', 'salary']]  # Features
+y: object = df['has_money']  # Target
 
-# Initialize the Decision Tree classifier
-dt_classifier = DecisionTreeClassifier(random_state=42)
+# Split the data into training and test sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Train the model
-dt_classifier.fit(X_train, y_train)
+# Initialize and train the Decision Tree model
+classifier = DecisionTreeClassifier()
+classifier.fit(X_train, y_train)
 
-# Make predictions on the test set
-predictions = dt_classifier.predict(X_test)
+# Make predictions
+df['predicted_has_money_dt'] = classifier.predict(X)
 
-# Calculate the accuracy of the model
-accuracy = accuracy_score(y_test, predictions)
-print(f'Accuracy: {accuracy}')
+print("-"*50)
+print("* Decision Tree")
 
-# Show some digits and their predicted labels
-fig, axes = plt.subplots(1, 4, figsize=(10, 3))
-for ax, image, prediction in zip(axes, X_test, predictions):
-    ax.set_axis_off()
-    ax.imshow(image.reshape(8, 8), cmap=plt.cm.gray_r, interpolation='nearest')
-    ax.set_title(f'Predicted: {prediction}')
+# Display the results
+for index, row in df.iterrows():
+    username: str = row['name']
+    money: str = 'has' if row['predicted_has_money_dt'] == 1 else 'does not have'
 
-plt.show()
+    print(f" --> {username} {money} money")
+
+print("-"*50)
