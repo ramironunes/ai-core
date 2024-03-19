@@ -2,11 +2,11 @@
 # @Author: Ramiro Luiz Nunes
 # @Date:   2024-03-19 13:57:09
 # @Last Modified by:   Ramiro Luiz Nunes
-# @Last Modified time: 2024-03-19 14:07:06
+# @Last Modified time: 2024-03-19 14:11:30
 
 
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
 
 import pandas as pd
 
