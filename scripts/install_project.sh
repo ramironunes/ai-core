@@ -2,7 +2,7 @@
 # @Author: Ramiro Luiz Nunes
 # @Date:   2024-05-12 10:15:55
 # @Last Modified by:   Ramiro Luiz Nunes
-# @Last Modified time: 2024-05-12 10:54:49
+# @Last Modified time: 2024-05-21 13:10:45
 
 
 # Define some ANSI color codes
@@ -17,12 +17,12 @@ NC='\033[0m' # No Color
 
 # Print a colorful header
 echo -e "${GREEN}========================================================${NC}"
-echo -e "${CYAN}          Installing Regression Trees Project          ${NC}"
+echo -e "${CYAN}              Installing AI Core Project               ${NC}"
 echo -e "${GREEN}========================================================${NC}"
 
 # Check if already in the script directory, if not, navigate to it
-if [[ $(basename "$PWD") != "script" ]]; then
-    cd script
+if [[ $(basename "$PWD") != "scripts" ]]; then
+    cd scripts
 fi
 
 # Grant execute permissions to the scripts
@@ -39,6 +39,6 @@ echo "Setting up virtual environment and installing Python requirements..."
 ./install_venv_packages.sh
 
 # Navigate back to the project root only if needed
-if [[ $(basename "$PWD") == "script" ]]; then
+if [[ $(basename "$PWD") == "scripts" ]]; then
     cd ..
 fi
