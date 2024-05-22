@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 # @Author: Ramiro Luiz Nunes
-# @Date:   2024-05-21 12:38:10
+# @Date:   2024-05-21 17:49:33
 # @Last Modified by:   Ramiro Luiz Nunes
-# @Last Modified time: 2024-05-21 18:40:28
+# @Last Modified time: 2024-05-21 18:45:21
 
 
 import os
 import pandas as pd
 
 from abc import ABC, abstractmethod
+from collections import Counter
 
 from sklearn.linear_model import LogisticRegression, Perceptron
 from sklearn.neighbors import KNeighborsClassifier
@@ -34,8 +35,13 @@ class BaseModel(ABC):
         pass
 
     def train(self, X_train: pd.DataFrame, y_train: pd.Series):
+        # Dynamically determine the number of splits for cross-validation
+        class_counts = Counter(y_train)
+        min_class_count = min(class_counts.values())
+        cv_splits = max(2, min(5, min_class_count))  # Ensure cv is at least 2
+
         if self.params:
-            grid_search = GridSearchCV(self.model, self.params, cv=5, scoring='accuracy')
+            grid_search = GridSearchCV(self.model, self.params, cv=cv_splits, scoring='accuracy')
             grid_search.fit(X_train, y_train)
             self.model = grid_search.best_estimator_
         else:
@@ -51,7 +57,7 @@ class BaseModel(ABC):
 
 class LogisticRegressionModel(BaseModel):
     def define_model(self):
-        self.model = LogisticRegression(max_iter=1000, solver='saga')
+        self.model = LogisticRegression(max_iter=2000, solver='saga')  # Increased max_iter
 
 
 class KNNModel(BaseModel):
@@ -86,7 +92,7 @@ class DecisionTreeModel(BaseModel):
 
 class MLPModel(BaseModel):
     def define_model(self):
-        self.model = MLPClassifier(max_iter=500)
+        self.model = MLPClassifier(max_iter=1000)  # Increased max_iter
         self.params = {
             'hidden_layer_sizes': [(50,), (100,)],
             'activation': ['relu', 'tanh'],
@@ -150,11 +156,11 @@ def train_and_evaluate_all_models(X_train: pd.DataFrame, X_test: pd.DataFrame,
     - A dictionary containing the accuracy of each model.
     """
     models = [
-        # LogisticRegressionModel(),
+        LogisticRegressionModel(),
         KNNModel(),
-        # PerceptronModel(),
+        PerceptronModel(),
         SVMModel(),
-        # DecisionTreeModel(),
+        DecisionTreeModel(),
         MLPModel()
     ]
 
